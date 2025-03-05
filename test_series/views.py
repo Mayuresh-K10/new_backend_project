@@ -213,7 +213,7 @@
 #         clear_response = form.cleaned_data['clear_response']
 
 #         session = get_object_or_404(
-#             ProctoringSession.objects.select_related('exam').only('id', 'exam_id'), 
+#             ProctoringSession.objects.select_related('exam').only('id', 'exam_id'),
 #             id=session_id,
 #             user=user
 #         )

@@ -2015,7 +2015,7 @@ class RegisterUniversityInChargeView(View):
             '''
             email = EmailMessage(subject, message, sender_email, recipient_email)
             email.send()
-             
+
             college = None
 
             if not college_id or college_id == 'None':
