@@ -157,7 +157,7 @@ class RecordProctoringEventView(View):
                 return JsonResponse({'error': 'Invalid data', 'errors': form.errors}, status=400)
 
             session = get_object_or_404(ProctoringSession, id=form.cleaned_data['session_id'], user=user)
-            
+
             if ProctoringEvent.objects.filter(session=session).exists():
                 return JsonResponse({'error': 'Event for this session already recorded'}, status=400)
 
