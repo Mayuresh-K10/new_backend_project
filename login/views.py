@@ -173,7 +173,7 @@ class Forgot_view(View):
 
                 user = new_user.objects.filter(email=EMAIL).first()
                 if not user:
-                    return JsonResponse({'error': 'Invalid token or email does not exist'}, status=404)
+                    return JsonResponse({'error': 'Email does not exist'}, status=404)
 
                 new_otp = ''.join([str(secrets.randbelow(10)) for _ in range(4)])
                 request.session['otp'] = new_otp
@@ -334,6 +334,11 @@ class Forgot2_view(View):
             stored_email = request.session.get('email')
             # user = new_user.objects.filter(email=stored_email, token=token).first()
             user = new_user.objects.filter(email=stored_email).first()  # Modified to exclude token logic
+
+            if user:
+                if check_password(password, user.password):
+                    return JsonResponse({'error': 'New password cannot be the same as the current password'}, status=400)
+
 
             if user:
                 user.password = make_password(password)
@@ -1220,7 +1225,7 @@ class Company_Forgot_view(View):
 
                 company = CompanyInCharge.objects.filter(official_email=EMAIL).first()
                 if not company:
-                    return JsonResponse({'error': 'email does not exist'}, status=404)
+                    return JsonResponse({'error': 'Email does not exist'}, status=404)
 
                 new_otp = ''.join([str(secrets.randbelow(10)) for _ in range(4)])
                 request.session['otp'] = new_otp
@@ -1356,6 +1361,10 @@ class CompanyForgot2_view(View):
             company = CompanyInCharge.objects.filter(official_email=stored_email).first()
 
             if company:
+                if check_password(password, company.password):
+                    return JsonResponse({'error': 'New password cannot be the same as the current password'}, status=400)
+
+            if company:
                 company.password = make_password(password)
                 company.save()
                 del request.session['email']
@@ -1381,7 +1390,7 @@ class ForgotUniversityInChargeView(View):
 
                 university = UniversityInCharge.objects.filter(official_email=EMAIL).first()
                 if not university:
-                    return JsonResponse({'error': 'Invalid token or email does not exist'}, status=404)
+                    return JsonResponse({'error': 'Email does not exist'}, status=404)
 
                 new_otp = ''.join([str(secrets.randbelow(10)) for _ in range(4)])
                 request.session['otp'] = new_otp
@@ -1506,6 +1515,10 @@ class ResetPasswordUniversityInChargeView(View):
             university = UniversityInCharge.objects.filter(official_email=stored_email).first()
 
             if university:
+                if check_password(password, university.password):
+                    return JsonResponse({'error': 'New password cannot be the same as the current password'}, status=400)
+
+            if university:
                 university.password = make_password(password)
                 university.save()
                 del request.session['email']
@@ -1538,6 +1551,8 @@ class ResetPasswordNewUserView(View):
                 return JsonResponse({'error': 'All fields are required'}, status=400)
             if new_password != confirm_password:
                 return JsonResponse({'error': 'Passwords do not match'}, status=400)
+            if old_password == new_password:
+                return JsonResponse({'error': 'New password cannot be the same as the old password'}, status=400)
 
             user = new_user.objects.filter(email=email, token=token, is_deleted=False).first()
             if not user:
@@ -1569,7 +1584,7 @@ class ForgotJobseekerView(View):
 
                 jobseeker = JobSeeker.objects.filter(email=EMAIL).first()
                 if not jobseeker:
-                    return JsonResponse({'error': 'email does not exist'}, status=404)
+                    return JsonResponse({'error': 'Email does not exist'}, status=404)
 
                 new_otp = ''.join([str(secrets.randbelow(10)) for _ in range(4)])
                 request.session['otp'] = new_otp
@@ -1692,6 +1707,10 @@ class ResetPasswordJobseekerView(View):
 
             stored_email = request.session.get('email')
             jobseeker = JobSeeker.objects.filter(email=stored_email).first()
+
+            if jobseeker:
+                if check_password(password, jobseeker.password):
+                    return JsonResponse({'error': 'New password cannot be the same as the current password'}, status=400)
 
             if jobseeker :
                 jobseeker .password = make_password(password)
